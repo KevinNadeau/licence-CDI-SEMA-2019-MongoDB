@@ -9,7 +9,10 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "mysql": "^2.16.0",
+        "bcryptjs": "^2.4.3",
         "express": "^4.16.4",
-        "mysql": "^2.16.0"
+        "mongoose": "^5.3.4",
+        "body-parser": "^1.18.3"
     }
 }
