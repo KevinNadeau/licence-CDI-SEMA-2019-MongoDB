@@ -1,24 +1,48 @@
 /** START Import Module NodeJs **/
-const http = require("http"); // Chargement du module HTTP - Il permet la création d'un serveur sous NodeJs
+const express = require('express');
+const mysql = require('mysql');
 /** END Import Module NodeJs **/
 
-/*
- *
- *   Création d'un serveur sous NodeJs
- *   Version sans express
- *
- */
+/** START Création des constant utiliser dans le serveur NodeJs **/
+const app = express() // Création d'un object express
+const user = { _id: 1, name: "Sylvestre", lastname: "Mike" } // Varible user de test api
+const connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'mydb'
+}); // Initialisation de la base de donnée
+/** END Création des constant utiliser dans le serveur NodeJs **/
 
-var serv = http.createServer(function(req, res) { // Création d'un serveur - La fonction anonyme ( Function qui n'a pas de nom ) est appeller à chaque fois qu'un utilisateur va sur votre site
-    console.log(req.url) // Affiche les console dans l'interface serveur - PAS DANS LE NAVIGATEUR - req.url permets la récuperation de l'url appelle par l'utilisateur sur le navigateur
-    if (req.url == '/') { // Si l'utilisateur n'a pas mise de route (http://localhost:8080)
-        res.end("<p>OOUUII je suis présent</p><script>console.log('Test')</script>") // Ecriture sur la page - res.end => echo en php - Elle affiche du code html
-    } else if (req.url == '/user') { // Si l'utilisateur tape une route (http://localhost:8080/user)
-        res.writeHead(200, { "Content-Type": "application/json" }); // Definition du code error - https://fr.wikipedia.org/wiki/Liste_des_codes_HTTP
-        res.end(JSON.stringify(user)) // Ecriture sur la page - res.end => echo en php
-    } else {
-        res.end("<p>Non je ne suis pas présent</p>") // Envoi au client, le fichier html
-    }
+connection.connect(); // Connection à la base de donnée MySql
+
+
+/** START Création de route sous express NodeJs **/
+app.get('/', function(req, res) { // Création d'un route sous express
+    res.sendFile(__dirname + '/index.html') // Envoi au client, le fichier html
 })
 
-serv.listen(8080); // Lancement du serveur sur un port - https://fr.wikipedia.org/wiki/Liste_de_ports_logiciels
+app.get('/user', function(req, res) {
+    connection.query('SELECT * FROM users', function(error, results, fields) { // Lancement de la requet SQL
+        if (error) throw error;
+        res.writeHead(200, { "Content-Type": "application/json" });
+        console.log('The solution is: ', results[0]._id);
+        res.end(JSON.stringify(results))
+    });
+})
+
+app.post('/user', function(req, res) {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    user._id = 2;
+    res.end(JSON.stringify(user))
+})
+
+app.delete('/user', function(req, res) {
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({}))
+    })
+    /** END Création de route sous express NodeJs **/
+
+app.listen(8080, function() { // Lancement du serveur sur un port
+    console.log('Example app listening on port 8080!')
+})
