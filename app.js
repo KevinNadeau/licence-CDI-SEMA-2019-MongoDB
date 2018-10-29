@@ -133,15 +133,26 @@ function sendJson(res, code = 200, data = "") {
     })
 }
 
+/**
+ * 
+ * 
+ * @param {Array} data 
+ * @param {Array} [key=["firstName", "lastname", "avatar"]] 
+ * @returns {Object} user 
+ */
 function upatedElem(data, key = ["firstName", "lastname", "avatar"]) {
-    var user = Object.create(null)
-    for (let i = 0; i < key.length; i++)
-        if (Object.prototype.hasOwnProperty.call(data, key[i]))
-            user[key[i]] = data[key[i]]
-    user.updatedAt = new Date();
-    return user;
+    var user = Object.create(null) // Création d'un Object vide
+    for (let i = 0; i < key.length; i++) // Boucle sur les elelments dans l'elements key
+        if (Object.prototype.hasOwnProperty.call(data, key[i])) // Verification si la key de trouve dans l'object data
+            user[key[i]] = data[key[i]] // Ajoute dans le nouvelle Object
+    user.updatedAt = new Date(); // Mets à jour la date de mise à jour
+    return user; // Renvoi le nouvelle Object
 }
 
+
+/**
+ * Lancement du serveur
+ */
 app.listen(8080, function() {
     console.log('Example app listening on port 8080!')
 })

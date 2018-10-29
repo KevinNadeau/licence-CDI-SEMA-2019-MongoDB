@@ -420,30 +420,30 @@
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script>
-        $(function() {
-            $("#add-user").click(function(e) {
-                e.preventDefault();
-                $("form").show();
-                $("form").attr("name", "post");
-                $("#password").parent().parent().show();
-                $("input").val("");
-                $("#title-form").text("Ajouter un user")
+        $(function() { // Lancement au chargement du site - Elle permet de lancer le code une fois les elements HTML charger afin de pouvoir les modifier
+
+            $("#add-user").click(function(e) { // Création un évènement au click sur la balise spa "Ajouter un nouvelle Utilisateur!"
+                e.preventDefault(); // Annulation de l'évènement par default lier à la balise
+                $("form").show(); // Affichage du formulaire
+                $("form").attr("name", "post"); // Add l'attribut name avec comme valeur post
+                $("#password").parent().parent().show(); // Permets d'afficher la div contenant le label et l'input du password
+                $("input").val(""); // Suppression du contenu (la valeur) de tout les input
+                $("#title-form").text("Ajouter un user") // Changement du titre 
             })
+
             $("form").submit(function(e) {
-                console.log("ooooo")
-                console.log($("form").attr("name"))
-                e.preventDefault();
-                if ($("form").attr("name") === "post")
-                    $.post("http://localhost:8080/user", $("form").serialize()).done(function(data) {
-                        if (!data.error) {
-                            $("#message").text("Votre utilisateur à bien été ajouté")
-                            $("form").hide();
-                            refrechUser()
-                        } else {
-                            $("#title-form-error").text(data.messageError)
-                        }
-                    })
-                else {
+                e.preventDefault(); // Annulation de l'évènement par default lier à la balise
+                if ($("form").attr("name") === "post") // Si le name du formulaire à pour valeur "post"
+                    $.post("http://localhost:8080/user", $("form").serialize()).done(function(data) { // Requete Ajax
+                    if (!data.error) { // Si aucune erreur
+                        $("#message").text("Votre utilisateur à bien été ajouté") // Affichage de message de réussite
+                        $("form").hide(); // Cacher le formulaire
+                        refrechUser() // Lancement de la fonction "refrechUser" pour actualiser la liste d'utilisateur
+                    } else {
+                        $("#title-form-error").text(data.messageError) // Affichage du message d'erreur
+                    }
+                })
+                else { // Requete Ajax
                     $.ajax({
                         url: "http://localhost:8080/user",
                         type: 'PUT',
@@ -455,10 +455,10 @@
                     }).done(function(data) {
                         if (!data.error) {
                             $("#message").text("Votre utilisateur à bien été mise à jour")
-                            $("form").hide();
-                            refrechUser()
+                            $("form").hide(); // Cacher le formulaire
+                            refrechUser() // Lancement de la fonction "refrechUser" pour actualiser la liste d'utilisateur
                         } else {
-                            $("#title-form-error").text(data.messageError)
+                            $("#title-form-error").text(data.messageError) // Affichage du message d'erreur
                         }
                     })
 
@@ -466,17 +466,16 @@
             })
 
             function refrechUser() {
-                $.get("http://localhost:8080/user").done(function(data) {
-                    console.log(data)
-                    $("tbody > tr").html("");
+                $.get("http://localhost:8080/user").done(function(data) { // Requete Ajax
+                    $("tbody > tr").html(""); // Vider le contenu du tableau
                     let tbody = ""
-                    for (let i = 0; i < data.users.length; i++)
+                    for (let i = 0; i < data.users.length; i++) // Boucle sur les elements renvoyez par l'api
                         tbody += '<tr><th scope="row"><a name="id-title">' + data.users[i]._id + '</a></th> <td>' + data.users[i].firstName + '</td> <td>' + data.users[i].lastname + '</td> <td><img src="' + data.users[i].avatar + '" width="100%"></td> <td>' + data.users[i].createdAt + '</td><td name="delete" data-id="' + data.users[i]._id + '"><i class="fas fa-times"></i></td></tr>'
-                    $("tbody").html(tbody);
+                    $("tbody").html(tbody); // Add le contenu 
 
                     $("a[name='id-title']").click(function(e) {
-                        e.preventDefault();
-                        $.get("http://localhost:8080/user/" + $(this).text()).done(function(data) {
+                        e.preventDefault(); // Annulation de l'évènement par default lier à la balise
+                        $.get("http://localhost:8080/user/" + $(this).text()).done(function(data) { // Requete Ajax
                             if (data.httpCode === 200) {
                                 $("#title-form").text("Mise à jour d'un user")
                                 $("#firstName").val(data.users.firstName);
@@ -491,7 +490,8 @@
                     })
 
                     $("td[name='delete']").click(function(e) {
-                        e.preventDefault();
+                        e.preventDefault(); // Annulation de l'évènement par default lier à la balise
+                        // Requete Ajax
                         $.ajax({
                             url: "http://localhost:8080/user/" + $(this).data("id"),
                             type: 'DELETE',
